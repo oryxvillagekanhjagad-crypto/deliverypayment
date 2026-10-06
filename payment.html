@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oryx Payment</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f4f4f4;
+    color: #111;
+    min-height: 100vh;
+}
+
+.app {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    margin: auto;
+    background: #fff;
+}
+
+.header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.header span {
+    font-size: 12px;
+    color: #777;
+}
+
+.content {
+    padding: 20px 18px 35px;
+}
+
+.nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 22px;
+}
+
+.nav button {
+    flex: 1;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    border-radius: 12px;
+    padding: 11px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.nav button.active {
+    background: #111;
+    color: #fff;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+.title {
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+
+.subtitle {
+    color: #777;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.amount-box {
+    background: #f7f7f7;
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 8px;
+}
+
+.amount-label {
+    color: #777;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.amount-input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 36px;
+    font-weight: 800;
+}
+
+.error {
+    display: none;
+    color: #d93025;
+    font-size: 13px;
+    margin: 8px 2px;
+}
+
+.main-btn {
+    width: 100%;
+    border: 0;
+    border-radius: 15px;
+    background: #111;
+    color: #fff;
+    padding: 17px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.main-btn:active,
+.secondary-btn:active {
+    transform: scale(.98);
+}
+
+.secondary-btn {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    background: #fff;
+    color: #111;
+    padding: 16px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.qr-card {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 22px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.qr-card img {
+    width: min(75vw, 280px);
+    height: min(75vw, 280px);
+    object-fit: contain;
+    background: #fff;
+    border-radius: 12px;
+    margin: 14px auto;
+}
+
+.pay-label {
+    color: #777;
+    font-size: 13px;
+}
+
+.pay-amount {
+    font-size: 30px;
+    font-weight: 800;
+    margin-top: 5px;
+}
+
+.camera-box {
+    background: #111;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+#video {
+    display: block;
+    width: 100%;
+    max-height: 65vh;
+    object-fit: cover;
+}
+
+.photo-preview {
+    width: 100%;
+    display: none;
+    border-radius: 20px;
+    margin-bottom: 14px;
+}
+
+.photo-status {
+    display: none;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.photo-good {
+    background: #e8f7ed;
+    color: #147d3b;
+}
+
+.photo-bad {
+    background: #fff0f0;
+    color: #c62828;
+}
+
+.info-card {
+    background: #f7f7f7;
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 15px;
+}
+
+.info-title {
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.info-text {
+    color: #777;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.success {
+    text-align: center;
+    padding-top: 25px;
+}
+
+.success-icon {
+    width: 82px;
+    height: 82px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: #e8f7ed;
+    color: #159447;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 43px;
+    font-weight: 700;
+}
+
+.success h2 {
+    font-size: 29px;
+    margin-bottom: 7px;
+}
+
+.success-description {
+    color: #777;
+}
+
+.success-amount {
+    font-size: 36px;
+    font-weight: 800;
+    margin: 20px 0;
+}
+
+.history-title {
+    font-size: 23px;
+    font-weight: 800;
+    margin-bottom: 15px;
+}
+
+.history-note {
+    background: #f7f7f7;
+    color: #777;
+    padding: 13px;
+    border-radius: 13px;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.history-item {
+    border: 1px solid #eee;
+    border-radius: 17px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.history-left {
+    min-width: 0;
+}
+
+.history-left strong {
+    display: block;
+    font-size: 17px;
+}
+
+.history-left small {
+    display: block;
+    color: #888;
+    margin-top: 5px;
+}
+
+.history-right {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.history-right strong {
+    display: block;
+}
+
+.paid {
+    color: #159447;
+    font-size: 12px;
+    font-weight: 800;
+    margin-top: 3px;
+}
+
+.proof-status {
+    font-size: 11px;
+    color: #888;
+    margin-top: 3px;
+}
+
+.empty {
+    text-align: center;
+    padding: 45px 15px;
+    color: #999;
+}
+
+@media (max-width: 360px) {
+    .content {
+        padding: 18px 14px;
+    }
+
+    .title {
+        font-size: 22px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="header">
+        <div class="logo">ORYX</div>
+        <span>Delivery Payment</span>
+    </header>
+
+    <main class="content">
+
+        <!-- NAVIGATION -->
+
+        <div class="nav">
+            <button id="paymentTab" class="active">
+                Payment
+            </button>
+
+            <button id="historyTab">
+                History
+            </button>
+        </div>
+
+
+        <!-- PAYMENT -->
+
+        <section id="paymentSection" class="section active">
+
+
+            <!-- STEP 1 : AMOUNT -->
+
+            <div id="amountStep">
+
+                <div class="title">
+                    Collect Payment
+                </div>
+
+                <div class="subtitle">
+                    Enter the customer's bill amount.
+                </div>
+
+                <div class="amount-box">
+
+                    <div class="amount-label">
+                        Amount
+                    </div>
+
+                    <input
+                        id="amountInput"
+                        class="amount-input"
+                        type="number"
+                        inputmode="decimal"
+                        min="1"
+                        step="0.01"
+                        placeholder="₹0"
+                    >
+
+                </div>
+
+                <div id="amountError" class="error">
+                    Please enter a valid amount.
+                </div>
+
+                <button id="showQRBtn" class="main-btn">
+                    Show Payment QR
+                </button>
+
+            </div>
+
+
+            <!-- STEP 2 : QR -->
+
+            <div id="qrStep" class="section">
+
+                <div class="title">
+                    Scan & Pay
+                </div>
+
+                <div class="subtitle">
+                    Ask the customer to scan the QR and complete the payment.
+                </div>
+
+                <div class="qr-card">
+
+                    <div class="pay-label">
+                        PAY ORYX VILLAGE
+                    </div>
+
+                    <!--
+                        Upload your QR to:
+
+                        assets/oryx-qr.png
+
+                        and keep this filename.
+                    -->
+
+                    <img
+                        src="assets/oryx-qr.png"
+                        alt="Oryx Village UPI QR"
+                    >
+
+                    <div id="qrAmount" class="pay-amount">
+                        ₹0.00
+                    </div>
+
+                    <div class="pay-label">
+                        UPI Payment
+                    </div>
+
+                </div>
+
+                <button id="takePhotoBtn" class="main-btn">
+                    📷 Take Payment Photo
+                </button>
+
+                <button id="backAmountBtn" class="secondary-btn">
+                    Change Amount
+                </button>
+
+            </div>
+
+
+            <!-- STEP 3 : CAMERA -->
+
+            <div id="cameraStep" class="section">
+
+                <div class="title">
+                    Payment Photo
+                </div>
+
+                <div class="subtitle">
+                    Take a clear photo of the customer's successful payment screen.
+                </div>
+
+                <div class="camera-box">
+
+                    <video
+                        id="video"
+                        autoplay
+                        playsinline
+                    ></video>
+
+                </div>
+
+                <canvas
+                    id="canvas"
+                    style="display:none;"
+                ></canvas>
+
+                <button id="captureBtn" class="main-btn">
+                    Take Photo
+                </button>
+
+                <button id="cancelCameraBtn" class="secondary-btn">
+                    Cancel
+                </button>
+
+            </div>
+
+
+            <!-- STEP 4 : PHOTO REVIEW -->
+
+            <div id="reviewStep" class="section">
+
+                <div class="title">
+                    Check Photo
+                </div>
+
+                <div class="subtitle">
+                    Make sure the payment amount and successful status are visible.
+                </div>
+
+                <img
+                    id="photoPreview"
+                    class="photo-preview"
+                    alt="Payment proof"
+                >
+
+                <div
+                    id="photoGood"
+                    class="photo-status photo-good"
+                >
+                    ✓ Photo looks clear.
+                </div>
+
+                <div
+                    id="photoBad"
+                    class="photo-status photo-bad"
+                >
+                    Photo may not be clear enough.
+                </div>
+
+                <button
+                    id="confirmPhotoBtn"
+                    class="main-btn"
+                >
+                    Continue
+                </button>
+
+                <button
+                    id="retakeBtn"
+                    class="secondary-btn"
+                >
+                    Take Another Photo
+                </button>
+
+            </div>
+
+
+            <!-- STEP 5 : FINAL CONFIRM -->
+
+            <div id="confirmStep" class="section">
+
+                <div class="title">
+                    Final Confirmation
+                </div>
+
+                <div class="subtitle">
+                    Check the customer's payment screen and confirm the payment.
+                </div>
+
+                <div class="info-card">
+
+                    <div class="info-title">
+                        Payment Details
+                    </div>
+
+                    <div class="info-text">
+
+                        Amount:
+                        <strong id="confirmAmount">
+                            ₹0.00
+                        </strong>
+
+                        <br><br>
+
+                        Method:
+                        <strong>
+                            UPI
+                        </strong>
+
+                        <br><br>
+
+                        The delivery boy has verified the customer's payment.
+
+                    </div>
+
+                </div>
+
+                <button
+                    id="finalConfirmBtn"
+                    class="main-btn"
+                >
+                    Confirm Payment
+                </button>
+
+                <button
+                    id="confirmBackBtn"
+                    class="secondary-btn"
+                >
+                    Take Another Photo
+                </button>
+
+            </div>
+
+
+            <!-- STEP 6 : SUCCESS -->
+
+            <div id="successStep" class="section">
+
+                <div class="success">
+
+                    <div class="success-icon">
+                        ✓
+                    </div>
+
+                    <h2>
+                        Payment Successful
+                    </h2>
+
+                    <p class="success-description">
+                        Payment has been recorded.
+                    </p>
+
+                    <div
+                        id="successAmount"
+                        class="success-amount"
+                    >
+                        ₹0.00
+                    </div>
+
+                    <div class="info-card">
+
+                        <div class="info-text">
+
+                            <strong>
+                                Payment Method
+                            </strong>
+
+                            <br>
+
+                            UPI
+
+                            <br><br>
+
+                            <strong>
+                                Time
+                            </strong>
+
+                            <br>
+
+                            <span id="successTime">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        id="newPaymentBtn"
+                        class="main-btn"
+                    >
+                        New Payment
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- HISTORY -->
+
+        <section
+            id="historySection"
+            class="section"
+        >
+
+            <div class="history-title">
+                Payment History
+            </div>
+
+            <div class="history-note">
+                Payment records remain in history.
+                Payment proof photos from previous days are automatically removed.
+            </div>
+
+            <div id="historyList"></div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+"use strict";
+
+
+/* =========================================
+   GLOBAL STATE
+========================================= */
+
+let currentAmount = 0;
+let currentPhoto = "";
+let cameraStream = null;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const amountInput =
+    document.getElementById("amountInput");
+
+const amountError =
+    document.getElementById("amountError");
+
+const amountStep =
+    document.getElementById("amountStep");
+
+const qrStep =
+    document.getElementById("qrStep");
+
+const cameraStep =
+    document.getElementById("cameraStep");
+
+const reviewStep =
+    document.getElementById("reviewStep");
+
+const confirmStep =
+    document.getElementById("confirmStep");
+
+const successStep =
+    document.getElementById("successStep");
+
+const paymentSection =
+    document.getElementById("paymentSection");
+
+const historySection =
+    document.getElementById("historySection");
+
+const paymentTab =
+    document.getElementById("paymentTab");
+
+const historyTab =
+    document.getElementById("historyTab");
+
+const qrAmount =
+    document.getElementById("qrAmount");
+
+const confirmAmount =
+    document.getElementById("confirmAmount");
+
+const successAmount =
+    document.getElementById("successAmount");
+
+const video =
+    document.getElementById("video");
+
+const canvas =
+    document.getElementById("canvas");
+
+const photoPreview =
+    document.getElementById("photoPreview");
+
+const photoGood =
+    document.getElementById("photoGood");
+
+const photoBad =
+    document.getElementById("photoBad");
+
+
+/* =========================================
+   STEP MANAGEMENT
+========================================= */
+
+function hideAllSteps() {
+
+    [
+        amountStep,
+        qrStep,
+        cameraStep,
+        reviewStep,
+        confirmStep,
+        successStep
+
+    ].forEach(step => {
+
+        step.classList.remove("active");
+
+    });
+}
+
+
+function showStep(step) {
+
+    hideAllSteps();
+
+    step.classList.add("active");
+}
+
+
+/* =========================================
+   MONEY FORMAT
+========================================= */
+
+function formatMoney(value) {
+
+    return "₹" + Number(value).toLocaleString(
+        "en-IN",
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    );
+}
+
+
+/* =========================================
+   DATE KEY
+========================================= */
+
+function getDateKey(date = new Date()) {
+
+    return (
+        date.getFullYear() +
+        "-" +
+        String(date.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(date.getDate()).padStart(2, "0")
+    );
+}
+
+
+/* =========================================
+   AMOUNT → QR
+========================================= */
+
+document
+    .getElementById("showQRBtn")
+    .addEventListener("click", () => {
+
+        const value =
+            Number(amountInput.value);
+
+        if (
+            !Number.isFinite(value) ||
+            value <= 0
+        ) {
+
+            amountError.style.display =
+                "block";
+
+            return;
+        }
+
+        amountError.style.display =
+            "none";
+
+        currentAmount =
+            Math.round(value * 100) / 100;
+
+        qrAmount.textContent =
+            formatMoney(currentAmount);
+
+        showStep(qrStep);
+    });
+
+
+/* =========================================
+   CHANGE AMOUNT
+========================================= */
+
+document
+    .getElementById("backAmountBtn")
+    .addEventListener("click", () => {
+
+        showStep(amountStep);
+
+    });
+
+
+/* =========================================
+   CAMERA
+========================================= */
+
+document
+    .getElementById("takePhotoBtn")
+    .addEventListener(
+        "click",
+        startCamera
+    );
+
+
+async function startCamera() {
+
+    showStep(cameraStep);
+
+    try {
+
+        cameraStream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video: {
+                    facingMode: {
+                        ideal: "environment"
+                    }
+                },
+
+                audio: false
+
+            });
+
+        video.srcObject =
+            cameraStream;
+
+    } catch (error) {
+
+        alert(
+            "Camera could not be opened. Please allow camera permission and try again."
+        );
+
+        showStep(qrStep);
+    }
+}
+
+
+/* =========================================
+   STOP CAMERA
+========================================= */
+
+function stopCamera() {
+
+    if (!cameraStream) {
+        return;
+    }
+
+    cameraStream
+        .getTracks()
+        .forEach(track => {
+
+            track.stop();
+
+        });
+
+    cameraStream = null;
+
+    video.srcObject = null;
+}
+
+
+/* =========================================
+   CANCEL CAMERA
+========================================= */
+
+document
+    .getElementById("cancelCameraBtn")
+    .addEventListener("click", () => {
+
+        stopCamera();
+
+        showStep(qrStep);
+
+    });
+
+
+/* =========================================
+   CAPTURE PHOTO
+========================================= */
+
+document
+    .getElementById("captureBtn")
+    .addEventListener("click", () => {
+
+        if (
+            !video.videoWidth ||
+            !video.videoHeight
+        ) {
+
+            alert(
+                "Camera is not ready yet."
+            );
+
+            return;
+        }
+
+        canvas.width =
+            video.videoWidth;
+
+        canvas.height =
+            video.videoHeight;
+
+        const context =
+            canvas.getContext("2d");
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        currentPhoto =
+            canvas.toDataURL(
+                "image/jpeg",
+                0.82
+            );
+
+        stopCamera();
+
+        photoPreview.src =
+            currentPhoto;
+
+        checkPhotoQuality();
+
+        showStep(reviewStep);
+    });
+
+
+/* =========================================
+   PHOTO QUALITY
+========================================= */
+
+function checkPhotoQuality() {
+
+    photoGood.style.display =
+        "none";
+
+    photoBad.style.display =
+        "none";
+
+    /*
+        This is a basic technical quality check.
+        It does NOT verify that money was actually
+        received.
+    */
+
+    const imageSize =
+        currentPhoto.length;
+
+    if (imageSize > 20000) {
+
+        photoGood.style.display =
+            "block";
+
+    } else {
+
+        photoBad.style.display =
+            "block";
+    }
+}
+
+
+/* =========================================
+   RETAKE
+========================================= */
+
+document
+    .getElementById("retakeBtn")
+    .addEventListener("click", () => {
+
+        currentPhoto = "";
+
+        startCamera();
+
+    });
+
+
+/* =========================================
+   PHOTO → CONFIRMATION
+========================================= */
+
+document
+    .getElementById("confirmPhotoBtn")
+    .addEventListener("click", () => {
+
+        const imageSize =
+            currentPhoto.length;
+
+        if (imageSize <= 20000) {
+
+            const retry =
+                confirm(
+                    "The photo may not be clear enough.\n\nDo you need to take one more?"
+                );
+
+            if (retry) {
+
+                startCamera();
+
+                return;
+            }
+        }
+
+        confirmAmount.textContent =
+            formatMoney(currentAmount);
+
+        showStep(confirmStep);
+    });
+
+
+/* =========================================
+   FINAL CONFIRMATION
+========================================= */
+
+document
+    .getElementById("finalConfirmBtn")
+    .addEventListener("click", () => {
+
+        const now =
+            new Date();
+
+        const payment = {
+
+            id:
+                "PAY-" +
+                Date.now(),
+
+            amount:
+                currentAmount,
+
+            method:
+                "UPI",
+
+            status:
+                "PAID",
+
+            date:
+                getDateKey(now),
+
+            time:
+                now.toISOString(),
+
+            /*
+                Proof is intentionally stored only
+                with the payment record for today.
+            */
+
+            photo:
+                currentPhoto
+
+        };
+
+        savePayment(payment);
+
+        successAmount.textContent =
+            formatMoney(
+                currentAmount
+            );
+
+        document
+            .getElementById("successTime")
+            .textContent =
+            now.toLocaleString(
+                "en-IN",
+                {
+                    dateStyle: "medium",
+                    timeStyle: "short"
+                }
+            );
+
+        showStep(successStep);
+
+        renderHistory();
+    });
+
+
+/* =========================================
+   BACK TO PHOTO
+========================================= */
+
+document
+    .getElementById("confirmBackBtn")
+    .addEventListener("click", () => {
+
+        startCamera();
+
+    });
+
+
+/* =========================================
+   NEW PAYMENT
+========================================= */
+
+document
+    .getElementById("newPaymentBtn")
+    .addEventListener("click", () => {
+
+        resetPayment();
+
+        showStep(amountStep);
+
+    });
+
+
+function resetPayment() {
+
+    stopCamera();
+
+    currentAmount = 0;
+
+    currentPhoto = "";
+
+    amountInput.value = "";
+
+    photoPreview.src = "";
+
+    photoGood.style.display =
+        "none";
+
+    photoBad.style.display =
+        "none";
+}
+
+
+/* =========================================
+   GET PAYMENTS
+========================================= */
+
+function getPayments() {
+
+    try {
+
+        const data =
+            localStorage.getItem(
+                "oryxPayments"
+            );
+
+        if (!data) {
+            return [];
+        }
+
+        const parsed =
+            JSON.parse(data);
+
+        return Array.isArray(parsed)
+            ? parsed
+            : [];
+
+    } catch (error) {
+
+        return [];
+    }
+}
+
+
+/* =========================================
+   SAVE PAYMENT
+========================================= */
+
+function savePayment(payment) {
+
+    const payments =
+        getPayments();
+
+    payments.unshift(payment);
+
+    /*
+        Keep maximum 100 records.
+    */
+
+    const limited =
+        payments.slice(0, 100);
+
+    localStorage.setItem(
+        "oryxPayments",
+        JSON.stringify(limited)
+    );
+}
+
+
+/* =========================================
+   REMOVE PREVIOUS-DAY PROOFS
+========================================= */
+
+function cleanOldPaymentProofs() {
+
+    const payments =
+        getPayments();
+
+    if (!payments.length) {
+        return;
+    }
+
+    const today =
+        getDateKey();
+
+    let changed = false;
+
+    payments.forEach(payment => {
+
+        /*
+            Use stored date when available.
+        */
+
+        let paymentDate =
+            payment.date;
+
+        /*
+            Compatibility with older records.
+        */
+
+        if (!paymentDate && payment.time) {
+
+            paymentDate =
+                getDateKey(
+                    new Date(payment.time)
+                );
+        }
+
+        /*
+            If payment is from another day,
+            delete ONLY the photo.
+        */
+
+        if (
+            paymentDate &&
+            paymentDate !== today &&
+            payment.photo
+        ) {
+
+            delete payment.photo;
+
+            changed = true;
+        }
+
+    });
+
+
+    if (changed) {
+
+        localStorage.setItem(
+            "oryxPayments",
+            JSON.stringify(payments)
+        );
+    }
+}
+
+
+/* =========================================
+   PAYMENT HISTORY
+========================================= */
+
+function renderHistory() {
+
+    const historyList =
+        document.getElementById(
+            "historyList"
+        );
+
+    const payments =
+        getPayments();
+
+    historyList.innerHTML = "";
+
+
+    if (!payments.length) {
+
+        historyList.innerHTML = `
+            <div class="empty">
+                No payments yet.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    payments.forEach(payment => {
+
+        const date =
+            new Date(payment.time);
+
+        const item =
+            document.createElement(
+                "div"
+            );
+
+        item.className =
+            "history-item";
+
+
+        const proofAvailable =
+            Boolean(payment.photo);
+
+
+        item.innerHTML = `
+
+            <div class="history-left">
+
+                <strong>
+                    ${formatMoney(payment.amount)}
+                </strong>
+
+                <small>
+                    ${date.toLocaleDateString(
+                        "en-IN"
+                    )}
+                    ·
+                    ${date.toLocaleTimeString(
+                        "en-IN",
+                        {
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }
+                    )}
+                </small>
+
+            </div>
+
+
+            <div class="history-right">
+
+                <strong>
+                    UPI
+                </strong>
+
+                <div class="paid">
+                    PAID ✓
+                </div>
+
+                <div class="proof-status">
+                    ${
+                        proofAvailable
+                        ? "Proof saved"
+                        : "Proof removed"
+                    }
+                </div>
+
+            </div>
+        `;
+
+
+        historyList.appendChild(item);
+
+    });
+}
+
+
+/* =========================================
+   TABS
+========================================= */
+
+paymentTab
+    .addEventListener("click", () => {
+
+        paymentTab.classList.add(
+            "active"
+        );
+
+        historyTab.classList.remove(
+            "active"
+        );
+
+        paymentSection.classList.add(
+            "active"
+        );
+
+        historySection.classList.remove(
+            "active"
+        );
+
+    });
+
+
+historyTab
+    .addEventListener("click", () => {
+
+        historyTab.classList.add(
+            "active"
+        );
+
+        paymentTab.classList.remove(
+            "active"
+        );
+
+        paymentSection.classList.remove(
+            "active"
+        );
+
+        historySection.classList.add(
+            "active"
+        );
+
+        /*
+            Run cleanup whenever History
+            is opened as well.
+        */
+
+        cleanOldPaymentProofs();
+
+        renderHistory();
+
+    });
+
+
+/* =========================================
+   MIDNIGHT / NEW-DAY CLEANUP
+========================================= */
+
+function scheduleNextDayCleanup() {
+
+    const now =
+        new Date();
+
+    const tomorrow =
+        new Date(now);
+
+    tomorrow.setHours(
+        24,
+        0,
+        2,
+        0
+    );
+
+    const delay =
+        tomorrow.getTime() -
+        now.getTime();
+
+
+    setTimeout(() => {
+
+        cleanOldPaymentProofs();
+
+        renderHistory();
+
+        /*
+            Schedule the next day.
+        */
+
+        scheduleNextDayCleanup();
+
+    }, delay);
+}
+
+
+/* =========================================
+   STARTUP
+========================================= */
+
+/*
+    Clean previous-day proof immediately
+    when the app is opened.
+*/
+
+cleanOldPaymentProofs();
+
+renderHistory();
+
+scheduleNextDayCleanup();
+
+</script>
+
+</body>
+</html>
